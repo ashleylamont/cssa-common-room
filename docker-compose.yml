@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: door-status
-    ports:
-      - "3001:3001"
-    restart: unless-stopped
+    # ports:
+      # - "3001:3001"
+    restart: on-failure
     environment:
       NODE_ENV: production        # plus DATABASE_URL, etc.
     volumes:
@@ -22,3 +22,8 @@ services:
 
 volumes:
   prisma-data:                    # ← named volume lives outside container life-cycle
+
+networks:
+  traefik_web:
+    name: traefik_web
+    external: true
