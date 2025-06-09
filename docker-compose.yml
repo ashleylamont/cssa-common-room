@@ -1,6 +1,9 @@
 services:
   door-status:
-    build: .
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: door-status
     ports:
       - "3001:3001"
