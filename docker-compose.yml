@@ -10,6 +10,12 @@ services:
     volumes:
       # Persist everything under /app/prisma (schema, generated client, SQLite file, etc.)
       - prisma-data:/app/prisma
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cssacommonroom.rule=Host(`cssa.ashl.dev`)"
+      - "traefik.http.routers.cssacommonroom.entrypoints=websecure"
+      - "traefik.http.services.cssacommonroom.loadbalancer.server.port=3001"
+      - "traefik.http.routers.cssacommonroom.tls.certresolver=leresolver"
 
 volumes:
   prisma-data:                    # ← named volume lives outside container life-cycle
