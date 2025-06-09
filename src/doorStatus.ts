@@ -135,11 +135,12 @@ async function main() {
       // Proxy requests to the pre-built frontend in production mode
       if (process.env.NODE_ENV === "production") {
         let url = new URL(request.url).pathname;
-        if (url === "/") {
+        if (url === "/" || url === "") {
           url = "/index.html"; // Serve index.html for root requests
         }
         // Check if the requested file is allowed
         if (!allowedFiles.includes(url)) {
+          console.warn(`Blocked access to disallowed file: ${url}`);
           return new Response("Not Found", { status: 404 });
         }
         // Serve the requested file from the dist directory
