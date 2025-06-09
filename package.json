@@ -1,0 +1,26 @@
+{
+  "name": "cssa-common-room",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/bun": "latest",
+    "globals": "^16.2.0",
+    "typescript-eslint": "^8.33.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "@tailwindcss/vite": "^4.1.8",
+    "@types/node": "^22.15.30",
+    "eslint": "^9.28.0",
+    "prisma": "^6.9.0",
+    "solid-js": "^1.9.7",
+    "tailwindcss": "^4.1.8",
+    "vite": "^6.3.5",
+    "vite-plugin-solid": "^2.11.6"
+  }
+}

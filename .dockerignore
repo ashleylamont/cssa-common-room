@@ -1,0 +1,5 @@
+# Prevents large or sensitive files winding up in the image
+.git
+node_modules
+dist
+*.log

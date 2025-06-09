@@ -1,0 +1,15 @@
+services:
+  door-status:
+    build: .
+    container_name: door-status
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production        # plus DATABASE_URL, etc.
+    volumes:
+      # Persist everything under /app/prisma (schema, generated client, SQLite file, etc.)
+      - prisma-data:/app/prisma
+
+volumes:
+  prisma-data:                    # ← named volume lives outside container life-cycle
