@@ -3,7 +3,7 @@ services:
     pull_policy: build
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.
     container_name: door-status
     ports:
       - "3001:3001"
@@ -12,7 +12,7 @@ services:
       NODE_ENV: production        # plus DATABASE_URL, etc.
     volumes:
       # Persist everything under /app/prisma (schema, generated client, SQLite file, etc.)
-      - prisma-data:/app/prisma
+      - prisma-data:/app/prisma/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cssacommonroom.rule=Host(`cssa.ashl.dev`)"
