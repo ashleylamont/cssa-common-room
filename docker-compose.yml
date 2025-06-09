@@ -3,7 +3,7 @@ services:
     pull_policy: build
     build:
       context: .
-      dockerfile: Dockerfile.
+      dockerfile: Dockerfile
     container_name: door-status
     ports:
       - "3001:3001"
