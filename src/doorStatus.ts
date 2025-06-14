@@ -121,14 +121,32 @@ async function main() {
         );
       },
       "/api/doorStatusHistory": async () => {
+        const oneYearAgo = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
         const doorStatusHistory = await prisma.doorStatus.findMany({
           orderBy: {
             createdAt: "desc",
           },
+          where: {
+            createdAt: {
+              gte: oneYearAgo,
+            },
+          },
         });
-        return new Response(JSON.stringify(doorStatusHistory), {
-          headers: { "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify(
+            doorStatusHistory.map(
+              (historyItem) =>
+                ({
+                  status: historyItem.status as DoorStatus,
+                  since: historyItem.createdAt.toISOString(),
+                  fetchedAt: new Date().toISOString(), // for client-side use
+                } satisfies DoorStatusResponse)
+            )
+          ),
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       },
     },
     fetch: (request) => {

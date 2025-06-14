@@ -1,5 +1,12 @@
-import { createResource, onCleanup } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  onCleanup,
+} from "solid-js";
 import type { DoorStatus, DoorStatusResponse } from "./types";
+import { CurrentDoorStatus } from "./CurrentDoorStatus";
+import { DoorStatusHistory } from "./DoorStatusHistory";
 
 function getCurrentDoorStatus(): Promise<DoorStatusResponse> {
   return fetch("/api/currentDoorStatus").then((response) => {
@@ -10,7 +17,16 @@ function getCurrentDoorStatus(): Promise<DoorStatusResponse> {
   });
 }
 
-const doorStatusColors: Record<DoorStatus, string> = {
+function getDoorStatusHistory(): Promise<DoorStatusResponse[]> {
+  return fetch("/api/doorStatusHistory").then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  });
+}
+
+export const doorStatusColors: Record<DoorStatus, string> = {
   open: "bg-green-500 text-white",
   closed: "bg-red-500 text-white",
   unknown: "bg-gray-500 text-white",
@@ -18,6 +34,22 @@ const doorStatusColors: Record<DoorStatus, string> = {
 
 function App() {
   const [doorStatus, { refetch }] = createResource(getCurrentDoorStatus);
+  const [doorStatusHistory, { refetch: refetchHistory }] =
+    createResource(getDoorStatusHistory);
+  const [doorStatusSinceSignal, setDoorStatusSince] = createSignal<
+    string | null
+  >(null);
+  createEffect(() => {
+    const since = doorStatus()?.since;
+    if (doorStatusSinceSignal() !== since && since !== undefined) {
+      // On future updates, refetch the history
+      if (doorStatusSinceSignal() !== null) {
+        refetchHistory();
+      }
+      // Update the signal with the new since value
+      setDoorStatusSince(since);
+    }
+  });
 
   const refreshInterval = 5000; // Refresh every 5 seconds
   const refreshTimer = setInterval(() => {
@@ -36,42 +68,9 @@ function App() {
           </span>{" "}
           Common Room Status
         </h1>
-        {/* Loading state */}
-        {doorStatus.loading && doorStatus.latest === undefined && (
-          <p class="text-xl text-gray-700">Loading...</p>
-        )}
-        {/* Error state */}
-        {doorStatus.error && (
-          <p class="text-xl text-red-600">
-            Error fetching door status: {doorStatus.error.message}
-          </p>
-        )}
-        {/* Success state */}
-        {doorStatus.latest && (
-          <div class="text-2xl font-semibold">
-            <p class="mb-2">
-              Current Door Status:{" "}
-              <span
-                class={`px-4 py-2 rounded-full ${
-                  doorStatusColors[doorStatus.latest.status]
-                }`}
-                onClick={() => refetch()}
-                classList={{
-                  "cursor-pointer": doorStatus.latest.status !== "unknown",
-                }}
-              >
-                {doorStatus()!.status}
-              </span>
-            </p>
-            <p class="text-sm text-gray-600">
-              Since: {new Date(doorStatus.latest.since).toLocaleString()}
-            </p>
-            <p class="text-sm text-gray-600">
-              Last updated:{" "}
-              {new Date(doorStatus.latest.fetchedAt).toLocaleString()}
-            </p>
-          </div>
-        )}
+        <CurrentDoorStatus doorStatus={doorStatus} refetch={refetch} />
+        <div class="mt-8" />
+        <DoorStatusHistory doorStatusHistory={doorStatusHistory} />
       </div>
     </div>
   );
