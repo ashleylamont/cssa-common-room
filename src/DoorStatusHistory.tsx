@@ -99,7 +99,7 @@ const funUnits: FunUnit[] = [
     duration: 15 * SECOND,
   },
   {
-    name: "Portal 2 speedruns",
+    name: "Portal speedruns",
     duration: 5 * MINUTE + 39 * SECOND + 960,
   },
 ];
