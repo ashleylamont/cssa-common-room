@@ -20,21 +20,23 @@ function defaultMap<K extends string, V>(defaultValue: V): Record<K, V> {
   });
 }
 
+function dateString(date: Date): string {
+  return `${date.getFullYear().toString().padStart(4, "0")}-${(
+    date.getMonth() + 1
+  )
+    .toString()
+    .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+}
+
 function getDaysBetweenDates(start: Date, end: Date): string[] {
   const days: string[] = [];
   const currentDate = new Date(start);
   while (currentDate <= end) {
-    days.push(
-      `${currentDate.getFullYear()}-${
-        currentDate.getMonth() + 1
-      }-${currentDate.getDate()}`
-    );
+    days.push(dateString(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }
   // Ensure the end date is included
-  const endDateStr = `${end.getFullYear()}-${
-    end.getMonth() + 1
-  }-${end.getDate()}`;
+  const endDateStr = dateString(end);
   if (!days.includes(endDateStr)) {
     days.push(endDateStr);
   }
@@ -158,12 +160,7 @@ export const DoorStatusHistory = ({
     // Cleanup the interval when the component is unmounted
     return () => clearInterval(timeRefresher);
   });
-  const currentDate = createMemo(
-    () =>
-      `${currentTime().getFullYear()}-${
-        currentTime().getMonth() + 1
-      }-${currentTime().getDate()}`
-  );
+  const currentDate = createMemo(() => dateString(currentTime()));
 
   const oneYearAgo = createMemo(() => {
     const date = new Date(currentDate());
@@ -246,9 +243,7 @@ export const DoorStatusHistory = ({
         for (let i = 0; i < weekNumber; i++) {
           startDate.setDate(startDate.getDate() + 7);
         }
-        return `${startDate.getFullYear()}-${
-          startDate.getMonth() + 1
-        }-${startDate.getDate()}`;
+        return dateString(startDate);
       }
   );
 
