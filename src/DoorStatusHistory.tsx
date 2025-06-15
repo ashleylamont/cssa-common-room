@@ -258,7 +258,6 @@ export const DoorStatusHistory = ({
     const currentElement = document.querySelector(
       `[data-date="${currentDateStr}"]`
     );
-    console.log(currentElement, currentDateStr);
     if (currentElement) {
       currentElement.scrollIntoView({ behavior: "instant", block: "center" });
     }
