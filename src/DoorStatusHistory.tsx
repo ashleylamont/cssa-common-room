@@ -144,9 +144,25 @@ export const DoorStatusHistory = ({
             dailyOpenDurationObject[day] + openEnd - openStart;
         }
       }
-
       // Update the last status
       lastStatus = status;
+    }
+
+    // If the last status is still open, we need to add the time until now
+    if (lastStatus && lastStatus.status === DoorStatus.OPEN) {
+      const openDate = new Date(lastStatus.since);
+      const now = new Date();
+      const days = getDaysBetweenDates(openDate, now);
+      for (const day of days) {
+        const startOfDay = new Date(day);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(day);
+        endOfDay.setHours(23, 59, 59, 999);
+        const openStart = Math.max(openDate.getTime(), startOfDay.getTime());
+        const openEnd = Math.min(now.getTime(), endOfDay.getTime());
+        dailyOpenDurationObject[day] =
+          dailyOpenDurationObject[day] + openEnd - openStart;
+      }
     }
 
     return dailyOpenDurationObject;
@@ -303,7 +319,7 @@ export const DoorStatusHistory = ({
               <Show when={month()[0] === 0 || monthIndex === 0}>
                 <span class="font-bold">{month()[2]}</span>
               </Show>
-              <span class="font-semibold">{month()[1]}</span>
+              <span class="font-semibold truncate">{month()[1]}</span>
             </div>
           )}
         </Index>
